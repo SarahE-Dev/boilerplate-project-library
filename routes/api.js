@@ -8,7 +8,7 @@
 
 
 
-const { default: mongoose } = require('mongoose');
+const { mongoose } = require('mongoose');
 const Book = require('./Modal/Book');
 
 
@@ -26,9 +26,9 @@ module.exports = function (app) {
             commentcount: book.comments.length
           }
         });
-        res.json(bookArray);
+        res.send(bookArray);
       } catch (error) {
-        res.json({error: error.message});
+        res.send([]);
       }
     })
     
@@ -43,17 +43,17 @@ module.exports = function (app) {
         comments: []
       });
       try {
-        await newBook.save();
-        res.json(newBook);
+        const bookGiven = await newBook.save();
+        res.json(bookGiven);
       } catch (error) {
-        res.json({error: error.message});
+        res.send('there was an error saving')
       }
       
     })
     
     .delete(async function(req, res){
         try {
-          const deleteAll = await Book.deleteMany({});
+          const deleteAll = await Book.deleteMany();
           res.send('complete delete successful');
         } catch (error) {
           res.send('error')
@@ -70,7 +70,12 @@ module.exports = function (app) {
         if(!bookto)(
           res.send('no book exists')
         )
-        res.send(bookto);
+        res.json({
+          comments: bookto.comments,
+          _id: bookto._id,
+          title: bookto.title,
+          commentcount: bookto.comments.length
+        });
       } catch (error) {
         res.send('no book exists')
       }
