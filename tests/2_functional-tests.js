@@ -192,6 +192,7 @@ suite('Functional Tests', function() {
 
   });
 
-  })
+} );
+
 
 
