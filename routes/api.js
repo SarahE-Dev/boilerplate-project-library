@@ -68,8 +68,8 @@ module.exports = function (app) {
           res.send('no book exists')
         )
         res.json({
-          title: bookto.title,
           _id: bookto._id,
+          title: bookto.title,
           comments: bookto.comments
         });
       } catch (error) {
@@ -96,9 +96,9 @@ module.exports = function (app) {
           
           let commentBook = await foundBook.save();
           res.json({
-            title: commentBook.title,
             _id: commentBook._id,
-            comments: commentBook.comments,
+            title: commentBook.title,
+            comments: commentBook.comments
 
           })
         } catch (error) {
