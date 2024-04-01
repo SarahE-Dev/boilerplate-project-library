@@ -35,7 +35,7 @@ module.exports = function (app) {
     .post(async function (req, res){
       const {title} = req.body;
       if(!title) {
-        res.json('missing required field title');
+        res.send('missing required field title');
         return
       }
       const newBook = new Book({
@@ -64,13 +64,13 @@ module.exports = function (app) {
 
   app.route('/api/books/:id')
     .get(async function (req, res){
-      let bookId = req.params._id;
+      let bookId = req.params.id;
       try {
         const bookto = await Book.findById(bookId);
         if(!bookto)(
-          res.json('no book exists')
+          res.send('no book exists')
         )
-        res.json(bookto);
+        res.send(bookto);
       } catch (error) {
         res.send('no book exists')
       }
@@ -83,19 +83,20 @@ module.exports = function (app) {
           const {id} = req.params;
           
           if(!comment) {
-            res.json('missing required field comment');
+            res.send('missing required field comment');
             return
           }
           const foundBook = await Book.findById(id);
           if(!foundBook) {
-            throw new Error('no book exists');
+            res.send('no book exists');
+            return
           }
           foundBook.comments.push(comment);
           
           await foundBook.save();
-          res.json(foundBook);
+          res.send(foundBook);
         } catch (error) {
-          res.json('no book exists');
+          res.send('no book exists');
         }
     })
     
@@ -107,9 +108,10 @@ module.exports = function (app) {
           res.send('no book exists');
           return
         }
-        res.json('delete successful');
+        res.send('delete successful');
+        
       } catch (error) {
-        res.json('no book exists');
+        res.send('no book exists');
       }
     });
   
