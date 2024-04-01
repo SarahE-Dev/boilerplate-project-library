@@ -34,8 +34,15 @@ module.exports = function (app) {
     
     .post(async function (req, res){
       const {title} = req.body;
+      if(!title) {
+        res.json('missing required field title');
+        return
+      }
+      const newBook = new Book({
+        title,
+        comments: []
+      });
       try {
-        const newBook = new Book({title});
         await newBook.save();
         res.json(newBook);
       } catch (error) {
@@ -46,10 +53,10 @@ module.exports = function (app) {
     
     .delete(async function(req, res){
         try {
-          db.collection('books').deleteMany({});
-          res.json('complete delete successful');
+          await Book.deleteMany({});
+          res.send('complete delete successful');
         } catch (error) {
-          res.json({error: error.message});
+          res.send('error')
         }
     });
 
@@ -57,60 +64,46 @@ module.exports = function (app) {
 
   app.route('/api/books/:id')
     .get(async function (req, res){
+      let bookId = req.params.id;
       try {
-        if(!mongoose.Types.ObjectId.isValid(req.params.id)){
-          return res.json('no book exists')
-        }
-        const bookToFind = await Book.findById({_id: req.params.id})
-        if(!bookToFind) {
-          return res.json('no book exists');
-        }else{
-          res.json(bookToFind);
-        }
-        
+        const book = await Book.findById(bookId);
+        res.json(book);
       } catch (error) {
-        res.json({error: error.message});
+        res.send('no book exists')
       }
+
     })
     
     .post(async function(req, res){
         try {
           const {comment} = req.body;
-          if(!mongoose.Types.ObjectId.isValid(req.params.id)){
-            return res.json('no book exists')
-          }
-          const foundBook = await Book.findOne({_id: req.params.id});
+          const {id} = req.params;
+          
           if(!comment) {
-            return res.json('missing required field comment');
+            res.json('missing required field comment');
+            return
           }
-          if(!foundBook) {
-            return res.json('no book exists');
-          }
+          const foundBook = await Book.findById(id);
           
           foundBook.comments.push(comment);
           
           await foundBook.save();
           res.json(foundBook);
         } catch (error) {
-          res.json({error: error.message});
+          res.json('no book exists');
         }
     })
     
     .delete(async function(req, res){
       try {
         const {id} = req.params.id;
-        if(!mongoose.Types.ObjectId.isValid(req.params.id)){
-          return res.json('no book exists')
+        const bookToDelete = await Book.findByIdAndDelete(id);
+        if(!bookToDelete) {
+          throw new Error('no book exists');
         }
-        const bookToDelete = await Book.findOne({_id: id});
-        if(!bookToDelete._id) {
-          return res.json('no book exists');
-        }else{
-          const deleteB = await bookToDelete.findOneAndDelete({_id: id});
-          return res.json('delete successful');
-        }
+        res.json('delete successful');
       } catch (error) {
-        res.json({error: error.message});
+        res.json('no book exists');
       }
     });
   

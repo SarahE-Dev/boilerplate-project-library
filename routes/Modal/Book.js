@@ -1,8 +1,9 @@
 //book schema
 
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const bookSchema = new mongoose.Schema({
+const bookSchema = new Schema({
 
     title: {
 
@@ -11,11 +12,9 @@ const bookSchema = new mongoose.Schema({
 
     },
 
-    comments: {
-        type: Array,
-        default: []
-    }
+    comments: [String]
 
 });
+
 
 module.exports = mongoose.model('Book', bookSchema);
