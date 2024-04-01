@@ -68,10 +68,9 @@ module.exports = function (app) {
           res.send('no book exists')
         )
         res.json({
-          comments: bookto.comments,
-          _id: bookto._id,
           title: bookto.title,
-          commentcount: bookto.comments.length
+          _id: bookto._id,
+          comments: bookto.comments
         });
       } catch (error) {
         res.send('no book exists')
@@ -97,10 +96,9 @@ module.exports = function (app) {
           
           let commentBook = await foundBook.save();
           res.json({
-            comments: commentBook.comments,
-            _id: commentBook._id,
             title: commentBook.title,
-            commentcount: commentBook.comments.length
+            _id: commentBook._id,
+            comments: commentBook.comments,
 
           })
         } catch (error) {
