@@ -66,11 +66,11 @@ module.exports = function (app) {
     .get(async function (req, res){
       let bookId = req.params._id;
       try {
-        const book = await Book.findById(bookId);
-        !book(
+        const bookto = await Book.findById(bookId);
+        if(!bookto)(
           res.json('no book exists')
         )
-        res.json(book);
+        res.json(bookto);
       } catch (error) {
         res.send('no book exists')
       }
@@ -103,8 +103,9 @@ module.exports = function (app) {
       try {
         const {id} = req.params.id;
         const bookToDelete = await Book.findByIdAndDelete(id);
-        if(!bookToDelete) {
-          throw new Error('no book exists');
+        if(!bookToDelete){
+          res.send('no book exists');
+          return
         }
         res.json('delete successful');
       } catch (error) {
