@@ -64,9 +64,12 @@ module.exports = function (app) {
 
   app.route('/api/books/:id')
     .get(async function (req, res){
-      let bookId = req.params.id;
+      let bookId = req.params._id;
       try {
         const book = await Book.findById(bookId);
+        !book(
+          res.json('no book exists')
+        )
         res.json(book);
       } catch (error) {
         res.send('no book exists')
@@ -84,7 +87,9 @@ module.exports = function (app) {
             return
           }
           const foundBook = await Book.findById(id);
-          
+          if(!foundBook) {
+            throw new Error('no book exists');
+          }
           foundBook.comments.push(comment);
           
           await foundBook.save();
