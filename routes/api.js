@@ -6,9 +6,6 @@
 *       
 */
 
-
-
-const { mongoose } = require('mongoose');
 const Book = require('./Modal/Book');
 
 
@@ -85,21 +82,27 @@ module.exports = function (app) {
     .post(async function(req, res){
         try {
           const {comment} = req.body;
-          const {id} = req.params;
+          const bookId = req.params.id;
           
           if(!comment) {
             res.send('missing required field comment');
             return
           }
-          const foundBook = await Book.findById(id);
+          const foundBook = await Book.findById(bookId);
           if(!foundBook) {
             res.send('no book exists');
             return
           }
           foundBook.comments.push(comment);
           
-          await foundBook.save();
-          res.send(foundBook);
+          let commentBook = await foundBook.save();
+          res.json({
+            comments: commentBook.comments,
+            _id: commentBook._id,
+            title: commentBook.title,
+            commentcount: commentBook.comments.length
+
+          })
         } catch (error) {
           res.send('no book exists');
         }
@@ -107,12 +110,9 @@ module.exports = function (app) {
     
     .delete(async function(req, res){
       try {
-        const id = req.params.id;
-        const bookToDelete = await Book.findByIdAndDelete(id);
-        if(!bookToDelete){
-          res.send('no book exists');
-          return
-        }
+        const bookID = req.params.id;
+        const bookToDelete = await Book.findByIdAndDelete(bookID);
+        if(!bookToDelete) throw new Error('no book exists');
         res.send('delete successful');
         
       } catch (error) {
