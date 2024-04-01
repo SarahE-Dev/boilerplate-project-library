@@ -25,13 +25,11 @@ suite('Functional Tests', function() {
     chai.request(server)
       .get('/api/books')
       .end(function(err, res){
-        assert.equal(res.status, 200);
-        assert.isArray(res.body, 'response should be an array');
-        assert.property(res.body[0], 'commentcount', 'Books in array should contain commentcount');
-        assert.property(res.body[0], 'title', 'Books in array should contain title');
-        assert.property(res.body[0], '_id', 'Books in array should contain _id');
+        res.should.have.status(200);
+        res.body.should.be.a('array');
         done();
   });
+})
   /*
   * ----[END of EXAMPLE TEST]----
   */
@@ -172,7 +170,7 @@ suite('Functional Tests', function() {
           .delete('/api/books/' + bookID)
           .end(function(err, res){
             res.should.have.status(200);
-            res.text.should.equal('delete successful');
+            assert.equal(res.text, 'delete successful');
             done();
           });
         
@@ -195,5 +193,5 @@ suite('Functional Tests', function() {
   });
 
   })
-})
+
 

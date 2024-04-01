@@ -53,7 +53,7 @@ module.exports = function (app) {
     
     .delete(async function(req, res){
         try {
-          await Book.deleteMany({});
+          const deleteAll = await Book.deleteMany({});
           res.send('complete delete successful');
         } catch (error) {
           res.send('error')
@@ -102,7 +102,7 @@ module.exports = function (app) {
     
     .delete(async function(req, res){
       try {
-        const {id} = req.params.id;
+        const id = req.params.id;
         const bookToDelete = await Book.findByIdAndDelete(id);
         if(!bookToDelete){
           res.send('no book exists');
